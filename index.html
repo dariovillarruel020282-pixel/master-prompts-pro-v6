@@ -114,7 +114,7 @@ footer{color:var(--muted);font-size:11px;text-align:center;margin:22px 0 0}
 }
 
 </style>
-<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png"><link rel="apple-touch-icon" href="./icons/icon-192.png"><meta name="theme-color" content="#090806"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head>
+</head>
 <body>
 <header><div class="brand"><div class="logo">MP</div><div><h1>MASTER PROMPTS PRO V6</h1><p>EDICIÓN PREMIUM · PC Y CELULAR · V2, V3, V4 y V5 · 1.029 códigos</p></div></div></header>
 <div class="wrap">
@@ -135,7 +135,7 @@ footer{color:var(--muted);font-size:11px;text-align:center;margin:22px 0 0}
  <button id="favoritesView" class="quick">★ Favoritos <span id="favCount">0</span></button>
  <button id="historyView" class="quick">◷ Historial <span id="historyCount">0</span></button>
  <button id="exportData" class="quick">Exportar respaldo</button>
- <label class="quick importLabel">Importar respaldo<input id="importData" type="file" accept="application/json" hidden></label>
+ <label class="quick importLabel">Importar respaldo<input id="importData" type="file" accept=".json,application/json,text/json" hidden></label>
 </div>
 <p class="notice"><strong>V6 PREMIUM:</strong> Favoritos, historial y combinaciones propias se guardan en este navegador. Exporta un respaldo para trasladarlos a otro equipo. <strong>Importante:</strong> los códigos son etiquetas/atajos personalizados, no comandos universales. Se conservan tal como aparecen en los archivos originales. FACELOCK se prioriza al ordenar y al redactar el prompt, sin insertar ni modificar códigos.</p>
 <div class="layout">
@@ -279,15 +279,26 @@ $("exportData").onclick=()=>{
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="MASTER_PROMPTS_PRO_V6_RESPALDO.json";a.click();URL.revokeObjectURL(a.href);toast("Respaldo descargado");
 };
-$("importData").onchange=async e=>{
- const file=e.target.files[0];if(!file)return;
- try{const obj=JSON.parse(await file.text());if(!obj||obj.format!=="MASTER PROMPTS PRO V6 BACKUP")throw new Error("Formato no válido");
- favorites=Array.isArray(obj.favorites)?obj.favorites.filter(i=>Number.isInteger(i)&&i>=0&&i<DATA.length):[];
- history=Array.isArray(obj.history)?obj.history.filter(i=>Number.isInteger(i)&&i>=0&&i<DATA.length).slice(0,100):[];
- customCombos=Array.isArray(obj.customCombos)?obj.customCombos.filter(c=>c&&typeof c.title==="string"&&typeof c.code==="string"):[];
- writeStore(STORE.favorites,favorites);writeStore(STORE.history,history);writeStore(STORE.custom,customCombos);render();renderCustom();toast("Respaldo restaurado");
- }catch(err){toast("No se pudo importar ese respaldo");}e.target.value="";
-};
+$("importData").addEventListener("change", e=>{
+ const file=e.target.files && e.target.files[0];
+ if(!file){toast("No se seleccionó ningún archivo");return;}
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const obj=JSON.parse(String(reader.result||""));
+   if(!obj||obj.format!=="MASTER PROMPTS PRO V6 BACKUP")throw new Error("El archivo no es un respaldo V6 válido");
+   favorites=Array.isArray(obj.favorites)?obj.favorites.filter(i=>Number.isInteger(i)&&i>=0&&i<DATA.length):[];
+   history=Array.isArray(obj.history)?obj.history.filter(i=>Number.isInteger(i)&&i>=0&&i<DATA.length).slice(0,100):[];
+   customCombos=Array.isArray(obj.customCombos)?obj.customCombos.filter(c=>c&&typeof c.title==="string"&&typeof c.code==="string"):[];
+   writeStore(STORE.favorites,favorites);writeStore(STORE.history,history);writeStore(STORE.custom,customCombos);
+   render();renderCustom();
+   alert("Respaldo importado correctamente. Favoritos: "+favorites.length+" · Historial: "+history.length+" · Combinaciones: "+customCombos.length);
+  }catch(err){alert("No se pudo importar el respaldo: "+(err&&err.message?err.message:"archivo no válido"));}
+  e.target.value="";
+ };
+ reader.onerror=()=>{alert("No se pudo leer el archivo. Comprueba que esté guardado en Descargas.");e.target.value="";};
+ reader.readAsText(file,"UTF-8");
+});
 renderCustom();
 
 const mobileToggle=$("mobileMenuToggle");
@@ -300,13 +311,4 @@ if(mobileToggle){
 }
 render();
 </script>
-
-<script>
-if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
-  });
-}
-</script>
-
 </body></html>
