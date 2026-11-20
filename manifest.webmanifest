@@ -1,0 +1,31 @@
+{
+  "id": "./",
+  "name": "MASTER PROMPTS PRO V6",
+  "short_name": "MASTER PRO",
+  "description": "Biblioteca móvil de 1.029 códigos de MASTER PROMPTS PRO V6.",
+  "lang": "es-EC",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090806",
+  "theme_color": "#090806",
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

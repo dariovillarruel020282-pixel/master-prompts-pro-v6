@@ -1,0 +1,18 @@
+MASTER PROMPTS PRO V6 — PAQUETE PWA
+
+CONTENIDO
+- index.html: aplicación móvil con los 1.029 registros originales.
+- manifest.webmanifest: nombre, icono y configuración de instalación.
+- service-worker.js: caché de la aplicación para uso sin conexión después de la primera carga.
+- icons/: iconos 192x192 y 512x512.
+
+IMPORTANTE
+Una PWA instalable requiere servirse desde HTTPS (o localhost para pruebas).
+Abrir index.html directamente como archivo local NO activa la instalación PWA ni el service worker.
+Sube TODO el contenido de esta carpeta a un hosting HTTPS conservando la estructura.
+Después abre la dirección HTTPS en Chrome Android y selecciona:
+⋮ > Instalar aplicación (o Añadir a pantalla de inicio, según Chrome).
+
+DATOS DEL USUARIO
+Favoritos, historial y combinaciones personalizadas se guardan en el almacenamiento local del navegador.
+Usa Exportar respaldo en V6 para conservarlos y trasladarlos.
